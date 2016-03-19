@@ -2,12 +2,11 @@ set nocompatible
 
 " Setting up Vundle - the vim plugin bundler
 let has_vundle=1
-let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
-if !filereadable(vundle_readme)
+if !filereadable($HOME."/.vim/bundle/Vundle.vim/README.md")
     echo "Installing Vundle..."
     echo ""
-    silent !mkdir -p ~/.vim/bundle
-    silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/Vundle.vim
+    silent !mkdir -p $HOME/.vim/bundle
+    silent !git clone https://github.com/gmarik/vundle $HOME/.vim/bundle/Vundle.vim
     let has_vundle=0
 endif
 
@@ -33,7 +32,8 @@ call vundle#end()
 if has_vundle == 0
     echo "Installing Bundles, please ignore key map error messages"
     echo ""
-    :BundleInstall
+    :silent! PluginInstall
+    :qa
 endif
 
 filetype plugin indent on
