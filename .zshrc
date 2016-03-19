@@ -47,8 +47,8 @@ PS1="%{$fg_bold[blue]%}%n%{$reset_color%}@%{$fg_bold[green]%}%m %{$reset_color%}
 # Load SSH key into keychain
 eval $(keychain --eval --quiet id_rsa)
 
-alias snaphome='./.local/bin/snapshotter /home/glagasse glagasse@192.168.1.151:/tank/timemachine/praetorian'
-alias home='git --git-dir ~/.dotfiles/.git --work-tree=$HOME'
+alias snaphome='$HOME/.local/bin/snapshotter /home/glagasse glagasse@192.168.1.151:/tank/timemachine/praetorian'
+alias home='git --git-dir $HOME/.dotfiles/.git --work-tree=$HOME'
 
 #export WORKON_HOME=$HOME/.virtualenvs
 #export PROJECT_HOME=$HOME/Devel
