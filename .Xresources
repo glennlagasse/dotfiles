@@ -13,13 +13,13 @@ URxvt.perl-ext-common:
 URxvt.scrollBar: false
 ! colors
 URxvt.foreground: white
-!URxvt.background: black
-URxvt*depth: 32
-URxvt*background: rgba:0000/0000/0200/c800
+URxvt.background: black
+!URxvt*depth: 32
+!URxvt*background: rgba:0000/0000/0200/c800
 ! transparency
-URxvt.tranparent: true
-URxvt.tintColor: white
-URxvt.shading: 15
+!URxvt.tranparent: true
+!URxvt.tintColor: white
+!URxvt.shading: 15
 
 !black
 *color0:#333333
