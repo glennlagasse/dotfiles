@@ -22,6 +22,7 @@ Plugin 'gmarik/Vundle.vim'
 " Add all Vundle Plugins here
 Plugin 'jnurmine/Zenburn'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'molokai'
 
 " All Plugins must be added before the following line
 call vundle#end()
@@ -56,6 +57,8 @@ else
   set background=dark
   colorscheme zenburn
 endif
+
+highlight Comment cterm=italic
 
 " split navigation
 nnoremap <C-J> <C-W><C-J>
