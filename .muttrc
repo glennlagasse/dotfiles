@@ -17,7 +17,6 @@ unset imap_passive
 set imap_keepalive = 300
 
 set smtp_url="smtp://glagasse@glagasse.org@glennl.mail.pairserver.com:587"
-set smtp_pass="0Bc4Ja3M"
 set header_cache="$HOME/.mutt/headers/cache/"
 set message_cachedir="$HOME/.mutt/bodies/cache/"
 set certificate_file="$HOME/.mutt_certificates"
