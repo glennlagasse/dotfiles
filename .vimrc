@@ -39,7 +39,7 @@ endif
 
 filetype plugin indent on
 
-set guifont=Inconsolata\ 14
+set guifont=Input\ Mono\ 13
 set encoding=utf-8
 set fillchars+=stl:\ ,stlnc:\
 set termencoding=utf-8
