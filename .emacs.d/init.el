@@ -4,6 +4,8 @@
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("elpy" . "https://jorgenschaefer.github.io/packages/"))
+
 ;; (package-refresh-contents)
 
 (package-initialize)
@@ -50,6 +52,7 @@
   (define-key helm-find-files-map (kbd "C-k") 'helm-find-files-up-one-level))
 
 (use-package elpy
+  ;; pip install --user rope jedi flake8 importmagic autopep8 yapf
   :ensure t
   :config
   (progn
