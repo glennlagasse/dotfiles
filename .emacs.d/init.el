@@ -1,3 +1,16 @@
+
+;; Disable chrome
+(if (display-graphic-p)
+    (progn
+      (if (fboundp 'tooltip-mode) (tooltip-mode -1))
+      (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+      (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1)))
+  ;; Make tab key work in tty mode
+  (local-set-key [tab] 'tab-to-tab-stop)
+)
+
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+
 (require 'package)
 (setq package-enable-at-startup nil)
 
@@ -18,9 +31,6 @@
 ;; Make sure to have downloaded archive description.
 (or (file-exists-p package-user-dir)
     (package-refresh-contents))
-
-;; Make tab key work in tty mode
-(local-set-key [tab] 'tab-to-tab-stop)
 
 (use-package company
   :ensure t
@@ -90,22 +100,12 @@
 (use-package vimrc-mode
   :ensure t)
 
-;; Set default font to my liking
-(set-face-attribute 'default nil :font "Input Mono-13")
-(set-frame-font "Input Mono-13")
-
 ;; Configure backups behaviour
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq delete-old-versions -1)
 (setq version-control t)
 (setq vc-make-backup-files t)
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
-
-;; Disable chrome
-(tooltip-mode -1)
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
 
 ;; Display day/time/date
 (setq display-time-day-and-date t)
@@ -126,9 +126,16 @@
 (column-number-mode 1)
 (show-paren-mode 1)
 
+(if (eq system-type 'darwin) ;; mac specific settings
+    (progn
+      (defvar gl/my-font-choice "Menlo")
+      (setq mac-option-modifier 'alt)
+      (setq mac-command-modifier 'meta)
+      ;;(global-set-key [kp-delete] 'delete-char) ;; sets fn-delete to be right-delete
+      )
+  (defvar gl/my-font-choice "Input Mono"))
+
+(set-face-attribute 'default nil :font gl/my-font-choice)
+(set-frame-font gl/my-font-choice)
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(font-lock-comment-face ((t (:foreground "#7F9F7F" :slant italic :family "Input Mono")))))
+ '(font-lock-comment-face ((t (:foreground "#7F9F7F" :slant italic :family gl/my-font-choice)))))
