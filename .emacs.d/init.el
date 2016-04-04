@@ -128,14 +128,47 @@
 
 (if (eq system-type 'darwin) ;; mac specific settings
     (progn
-      (defvar gl/my-font-choice "Menlo")
       (setq mac-option-modifier 'alt)
       (setq mac-command-modifier 'meta)
       ;;(global-set-key [kp-delete] 'delete-char) ;; sets fn-delete to be right-delete
-      )
-  (defvar gl/my-font-choice "Input Mono"))
+      ))
 
-(set-face-attribute 'default nil :font gl/my-font-choice)
-(set-frame-font gl/my-font-choice)
+(require 'cl)
+(defun font-candidate (&rest fonts)
+  "Return existing font which first match."
+  (find-if (lambda (f) (find-font (font-spec :name f))) fonts))
+
+;; I've got three screen sizes that I run on
+;; Dell U2713HM- 2560x1440
+;; Macbook Air - 1440x900
+;; Dell Work Monitor - 1920x1080
+;; I also use different platforms (Linux, OS X) and I want to set
+;; a font and appropriate size based on which fonts are available on the
+;; platform I happen to be running on as well as what screen I happen
+;; to be using. The following lines figure that out.
+;;
+;; Find an appropriate font to use based on what the system provides
+;; I always want to use Input Mono if available, if not fallback to
+;; Inconsolata. If neither of those are found (perhaps I'm running on
+;; OS X) then look for Menlo and then if all else fails use Monospace.
+(setq gl/my-font-name (font-candidate "Input Mono" "Inconsolata" "Menlo" "Monospace"))
+
+(defun choose-font-size (screen-pixel-height)
+  "Figure out what font size to use"
+  (cond ((eq 1080 screen-pixel-height) "14") ;; Dell Work Monitor
+        ((eq 1440 screen-pixel-height) "16") ;; Dell U2713HM
+        ((eq 900 screen-pixel-height) "16") ;; Macbook Air
+        ((eq 600 screen-pixel-height) "12") ;; Acer Aspire One
+        (t "12")))
+
+;; Pick an appropriate size for my font based on the pixel width of the
+;; screen I'm using.
+;;(setq gl/my-font-spec (concat gl/my-font-name "-" (choose-font-size)))
+(setq gl/my-font-spec (concat gl/my-font-name "-" (choose-font-size (display-pixel-height))))
+
+(set-face-attribute 'default nil :font gl/my-font-spec)
+(set-frame-font gl/my-font-spec)
+
+;; It would be good to put this in the use-package declarartion for zenburn-theme
 (custom-set-faces
- '(font-lock-comment-face ((t (:foreground "#7F9F7F" :slant italic :family gl/my-font-choice)))))
+ '(font-lock-comment-face ((t (:foreground "#7F9F7F" :slant italic :family gl/my-font-spec)))))
