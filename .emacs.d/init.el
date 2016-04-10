@@ -156,7 +156,7 @@
 (defun choose-font-size (screen-pixel-height)
   "Figure out what font size to use"
   (cond ((eq 1080 screen-pixel-height) "14") ;; Dell Work Monitor
-        ((eq 1440 screen-pixel-height) "16") ;; Dell U2713HM
+        ((eq 1440 screen-pixel-height) "14") ;; Dell U2713HM
         ((eq 900 screen-pixel-height) "16") ;; Macbook Air
         ((eq 600 screen-pixel-height) "12") ;; Acer Aspire One
         (t "12")))
