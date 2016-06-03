@@ -175,6 +175,6 @@ bar {
 }
 
 # Startup applications
-exec --no-startup-id compton -b
+exec --no-startup-id compton &
 exec --no-startup-id feh --bg-scale /home/glagasse/backgrounds/Starship_44.jpg
 exec --no-startup-id dropbox start
