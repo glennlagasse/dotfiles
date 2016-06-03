@@ -20,6 +20,7 @@ set smtp_url="smtp://glagasse@glagasse.org@glennl.mail.pairserver.com:587"
 set header_cache="$HOME/.mutt/headers/cache/"
 set message_cachedir="$HOME/.mutt/bodies/cache/"
 set certificate_file="$HOME/.mutt_certificates"
+set imap_check_subscribed
 
 macro index M "<tag-pattern>.*\r<tag-prefix><clear-flag>N<untag-pattern>.*\r" "Mark all messages in this mailbox as read"
 
@@ -144,7 +145,7 @@ set editor="/usr/bin/vim '+/^$' -c 'set ai et list tw=72 nowritebackup notitle n
 set folder="imaps://glennl.mail.pairserver.com"
 set history=50
 set indent_str="> "
-set mail_check=120
+set mail_check=60
 set timeout=600
 set pager_context=3
 set pager_index_lines=9   # number of lines to see from the index
