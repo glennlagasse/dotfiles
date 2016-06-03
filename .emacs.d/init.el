@@ -15,8 +15,8 @@
 (setq package-enable-at-startup nil)
 
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+;;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 (add-to-list 'package-archives '("elpy" . "https://jorgenschaefer.github.io/packages/"))
 
 ;; (package-refresh-contents)
@@ -31,6 +31,20 @@
 ;; Make sure to have downloaded archive description.
 (or (file-exists-p package-user-dir)
     (package-refresh-contents))
+
+(use-package enh-ruby-mode
+  :mode "\\.rb\\'"
+  :config
+    (setq enh-ruby-deep-indent-paren nil) ; Don't indent ruby function parameters at column index of function parentheses
+    )
+
+(use-package ruby-end)
+
+(use-package robe
+  :init
+  (add-hook 'enh-ruby-mode-hook 'robe-mode)
+  :config
+  (push 'company-robe company-backends))
 
 (use-package company
   :ensure t
