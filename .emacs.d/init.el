@@ -45,15 +45,41 @@
 (setq coding-system-for-write 'utf-8 )
 (setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
 (setq fill-column 80)		; toggle wrapping text at the 80th character
+(run-at-time nil (* 5 60) 'recentf-save-list) ; update recent files list every 5 minutes
+(global-auto-revert-mode t)             ; automatically reload buffer from disk when changed
+(global-linum-mode)
 
-;(global-linum-mode)
+;; Make files that start with !# executable on save
+(add-hook 'after-save-hook
+          #'executable-make-buffer-file-executable-if-script-p)
+
 
 (use-package general :ensure t)
+
+;; Define keys without a prefix
 (general-define-key
+  :states '(normal visual emacs)
   ;; replace default keybindings
+  "/" 'swiper
   ;;"C-s" 'swiper             ; search for string in current buffer
   "M-x" 'counsel-M-x        ; replace default M-x with ivy backend
 )
+
+;; Define keys with a prefix
+(general-define-key
+  :states '(normal visual emacs)
+  :prefix "SPC"
+  "n" '(linum-relative-toggle)
+  "fe" '(counsel-find-file)
+  "fr" '(counsel-recentf)
+  "bb" '(ivy-switch-buffer)
+  "bd" '(kill-this-buffer)
+)
+
+(use-package linum-relative
+  :ensure t
+  )
+
 
 (use-package which-key :ensure t
   :init
@@ -61,6 +87,10 @@
   (which-key-mode)
   :diminish which-key-mode
 )
+
+(use-package company :ensure t
+  :init
+  (add-hook 'after-init-hook 'global-company-mode))
 
 (use-package ivy
   :ensure t
@@ -74,16 +104,7 @@
   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
   )
 
-(use-package counsel :ensure t
-  :bind*                           ; load counsel when pressed
-  (("M-x"     . counsel-M-x)       ; M-x use counsel
-   ("C-x C-f" . counsel-find-file) ; C-x C-f use counsel-find-file
-   ("C-x C-r" . counsel-recentf))   ; search recently edited files
-;   ("C-c f"   . counsel-git)       ; search for files in git repo
-;   ("C-c s"   . counsel-git-grep)  ; search for regexp in git repo
-;   ("C-c /"   . counsel-ag)        ; search for regexp in git repo using ag
-;   ("C-c l"   . counsel-locate))   ; search for files or else using locate
-  )
+(use-package counsel :ensure t)
 
 (use-package evil
   :ensure t
@@ -94,6 +115,11 @@
 
 (use-package magit
   :ensure t)
+
+(defmacro rename-modeline (package-name mode new-name)
+  `(eval-after-load ,package-name
+     '(defadvice ,mode (after rename-modeline activate)
+        (setq mode-name ,new-name))))
 
 (use-package enh-ruby-mode :ensure t
   :mode
@@ -123,6 +149,12 @@
   :ensure t
   :config
   (load-theme 'zenburn t))
+
+(use-package solarized-theme
+  :ensure t
+  ;:config
+  ;(load-theme 'solarized-dark t)
+  )
 
 (use-package muttrc-mode
   :ensure t
@@ -183,6 +215,7 @@
 
 (column-number-mode 1)
 (show-paren-mode 1)
+(defvar show-paren-delay)
 (setq show-paren-delay 0)
 
 ;; key bindings
@@ -190,11 +223,24 @@
   (setq mac-option-modifier 'alt)
   (setq mac-command-modifier 'meta)
   (custom-set-variables '(epg-gpg-program  "/usr/local/bin/gpg2"))
+
+  (defun iterm-focus ()
+    (interactive)
+    (do-applescript
+     " do shell script \"open -a iTerm\"\n"
+     ))
+
+  (general-define-key
+   :states '(normal visual emacs)
+   :prefix "SPC"
+   "'" '(iterm-focus :which-key "focus iterm")
+    ;;"?" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
+    )
 )
   
 (require 'cl)
 (defun font-candidate (&rest fonts)
-  "Return existing font which first match."
+  "Return existing FONTS which first match."
   (find-if (lambda (f) (find-font (font-spec :name f))) fonts))
 
 ;; I've got three screen sizes that I run on
@@ -213,17 +259,21 @@
 (setq gl/my-font-name (font-candidate "Input Mono" "Inconsolata" "Menlo" "Monospace"))
 
 (defun choose-font-size (screen-pixel-height)
-  "Figure out what font size to use"
+  "Figure out what font size to use based on SCREEN-PIXEL-HEIGHT."
   (cond ((eq 1080 screen-pixel-height) "14") ;; Dell Work Monitor
         ((eq 1440 screen-pixel-height) "14") ;; Dell U2713HM
         ((eq 900 screen-pixel-height) "18") ;; Macbook Air
         ((eq 600 screen-pixel-height) "12") ;; Acer Aspire One
         (t "12")))
 
-;; Pick an appropriate size for my font based on the pixel width of the
-;; screen I'm using.
+;; Pick an appropriate size for my font based on the pixel width of
+;; the screen I'm using.
 ;;(setq gl/my-font-spec (concat gl/my-font-name "-" (choose-font-size)))
+(defvar gl/my-font-spec)
 (setq gl/my-font-spec (concat gl/my-font-name "-" (choose-font-size (display-pixel-height))))
 
 (set-face-attribute 'default nil :font gl/my-font-spec)
 (set-frame-font gl/my-font-spec)
+
+(provide 'init)
+;;; init.el ends here
