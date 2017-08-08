@@ -1,8 +1,19 @@
+;;; init.el -- My Emacs configuration
+;-*-Emacs-Lisp-*-
+
+;;; Commentary:
+;;
+;; I have nothing substantial to say here.
+;;
+;;; Code:
+
 (require 'package)
 
 (setq package-enable-at-startup nil) ; tells emacs not to load any packages before starting up
-;; the following lines tell emacs where on the internet to look up
-;; for new packages.
+
+;;
+;; The following lines tell emacs where on the internet to look for
+;; new packages.
 (setq package-archives '(("org"       . "http://orgmode.org/elpa/")
                          ("gnu"       . "http://elpa.gnu.org/packages/")
                          ("melpa"     . "https://melpa.org/packages/")
@@ -33,18 +44,20 @@
 (setq user-full-name "Glenn Lagasse"
       user-mail-address "glagasse@glagasse.org")
 
-(setq delete-old-versions -1 )		; delete excess backup versions silently
-(setq version-control t )		; use version control
-(setq vc-make-backup-files t )		; make backups file even when in version controlled dir
-(setq backup-directory-alist `(("." . "~/.emacs.d/backups")) ) ; which directory to put backups file
-(setq vc-follow-symlinks t )				       ; don't ask for confirmation when opening symlinked file
-(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)) ) ;transform backups file name
-(setq inhibit-startup-screen t )	; inhibit useless and old-school startup screen
-(setq ring-bell-function 'ignore )	; silent bell when you make a mistake
-(setq coding-system-for-read 'utf-8 )	; use utf-8 by default
-(setq coding-system-for-write 'utf-8 )
-(setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
-(setq fill-column 80)		; toggle wrapping text at the 80th character
+(setq delete-old-versions -1)           ; delete excess backup versions silently
+(setq version-control t )               ; use version control
+(setq vc-make-backup-files t)		; make backups file even when in version controlled dir
+(setq backup-directory-alist
+      `(("." . "~/.emacs.d/backups")))  ; which directory to put backups file
+(setq vc-follow-symlinks t)             ; don't ask for confirmation when opening symlinked file
+(setq auto-save-file-name-transforms
+      '((".*" "~/.emacs.d/auto-save-list/" t))) ;transform backups file name
+(setq inhibit-startup-screen t)	        ; inhibit useless and old-school startup screen
+(setq ring-bell-function 'ignore)       ; silent bell when you make a mistake
+(setq coding-system-for-read 'utf-8)    ; use utf-8 by default
+(setq coding-system-for-write 'utf-8)
+(setq sentence-end-double-space nil)    ; sentence SHOULD end with only a point.
+(setq fill-column 80)                   ; toggle wrapping text at the 80th character
 (run-at-time nil (* 5 60) 'recentf-save-list) ; update recent files list every 5 minutes
 (global-auto-revert-mode t)             ; automatically reload buffer from disk when changed
 (global-linum-mode)
@@ -53,7 +66,6 @@
 (add-hook 'after-save-hook
           #'executable-make-buffer-file-executable-if-script-p)
 
-
 (use-package general :ensure t)
 
 ;; Define keys without a prefix
@@ -61,7 +73,6 @@
   :states '(normal visual emacs)
   ;; replace default keybindings
   "/" 'swiper
-  ;;"C-s" 'swiper             ; search for string in current buffer
   "M-x" 'counsel-M-x        ; replace default M-x with ivy backend
 )
 
@@ -74,16 +85,22 @@
   "fr" '(counsel-recentf)
   "bb" '(ivy-switch-buffer)
   "bd" '(kill-this-buffer)
+  "w/" '(split-window-horizontally)
+  "wj" '(evil-window-down)
+  "wk" '(evil-window-up)
+  "wh" '(evil-window-left)
+  "wl" '(evil-window-right)
+  "wd" '(delete-window)
 )
 
 (use-package linum-relative
   :ensure t
   )
 
-
 (use-package which-key :ensure t
-  :init
+  :config
   (setq which-key-idle-delay 0.5)
+  :init
   (which-key-mode)
   :diminish which-key-mode
 )
@@ -117,6 +134,7 @@
   :ensure t)
 
 (defmacro rename-modeline (package-name mode new-name)
+  "For PACKAGE-NAME, rename MODE to NEW-NAME."
   `(eval-after-load ,package-name
      '(defadvice ,mode (after rename-modeline activate)
         (setq mode-name ,new-name))))
@@ -142,13 +160,14 @@
   (progn
     (setq sml/no-confirm-load-theme t)
     (sml/setup)
+    )
   )
-)
 
 (use-package zenburn-theme
   :ensure t
   :config
-  (load-theme 'zenburn t))
+  (load-theme 'zenburn t)
+  )
 
 (use-package solarized-theme
   :ensure t
@@ -158,11 +177,13 @@
 
 (use-package muttrc-mode
   :ensure t
-  :config
-  (add-to-list 'auto-mode-alist '("muttrc\\'" . muttrc-mode)))
+  :defer t
+  :mode "muttrc\\'"
+  )
 
 (use-package vimrc-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package rainbow-delimiters
   :ensure t
@@ -181,23 +202,16 @@
 )
 
 (use-package flycheck-color-mode-line
-    :ensure t
-    :config
-    (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
+  :ensure t
+  :defer t
+  :config
+  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
 )
 
 (use-package yaml-mode
   :ensure t
   :defer t
   :diminish
-)
-
-(use-package git-gutter+
-  :ensure t
-  :diminish
-  :defer t
-  :config
-  (global-git-gutter+-mode)
 )
 
 ;; Display day/time/date
@@ -214,12 +228,12 @@
 (global-set-key (kbd "RET") 'newline-and-indent)
 
 (column-number-mode 1)
-(show-paren-mode 1)
-(defvar show-paren-delay)
-(setq show-paren-delay 0)
 
-;; key bindings
-(when (eq system-type 'darwin) ;; mac specific settings
+(setq show-paren-delay 0)
+(show-paren-mode 1)
+
+;; Mac specific settings
+(when (eq system-type 'darwin)
   (setq mac-option-modifier 'alt)
   (setq mac-command-modifier 'meta)
   (custom-set-variables '(epg-gpg-program  "/usr/local/bin/gpg2"))
@@ -238,10 +252,10 @@
     )
 )
   
-(require 'cl)
+(require 'cl-lib)
 (defun font-candidate (&rest fonts)
   "Return existing FONTS which first match."
-  (find-if (lambda (f) (find-font (font-spec :name f))) fonts))
+  (cl-find-if (lambda (f) (find-font (font-spec :name f))) fonts))
 
 ;; I've got three screen sizes that I run on
 ;; Dell U2713HM- 2560x1440
@@ -256,11 +270,11 @@
 ;; I always want to use Input Mono if available, if not fallback to
 ;; Inconsolata. If neither of those are found (perhaps I'm running on
 ;; OS X) then look for Menlo and then if all else fails use Monospace.
-(setq gl/my-font-name (font-candidate "Input Mono" "Inconsolata" "Menlo" "Monospace"))
+(defvar gl/my-font-name (font-candidate "Input Mono" "Inconsolata" "Menlo" "Monospace"))
 
 (defun choose-font-size (screen-pixel-height)
   "Figure out what font size to use based on SCREEN-PIXEL-HEIGHT."
-  (cond ((eq 1080 screen-pixel-height) "14") ;; Dell Work Monitor
+  (cond ((eq 1080 screen-pixel-height) "18") ;; Dell Work Monitor
         ((eq 1440 screen-pixel-height) "14") ;; Dell U2713HM
         ((eq 900 screen-pixel-height) "18") ;; Macbook Air
         ((eq 600 screen-pixel-height) "12") ;; Acer Aspire One
@@ -268,9 +282,8 @@
 
 ;; Pick an appropriate size for my font based on the pixel width of
 ;; the screen I'm using.
-;;(setq gl/my-font-spec (concat gl/my-font-name "-" (choose-font-size)))
-(defvar gl/my-font-spec)
-(setq gl/my-font-spec (concat gl/my-font-name "-" (choose-font-size (display-pixel-height))))
+(defvar gl/my-font-spec (concat gl/my-font-name "-"
+				(choose-font-size (display-pixel-height))))
 
 (set-face-attribute 'default nil :font gl/my-font-spec)
 (set-frame-font gl/my-font-spec)
