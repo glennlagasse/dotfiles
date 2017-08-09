@@ -20,8 +20,9 @@
                          ("marmalade" . "http://marmalade-repo.org/packages/")))
 (package-initialize)
 
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file 'noerror)
+(setq-default custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 ;; Bootstrap `use-package'
 (unless (package-installed-p 'use-package) ; unless it is already installed
@@ -37,8 +38,7 @@
       (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
       (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1)))
   ;; Make tab key work in tty mode
-  (local-set-key [tab] 'tab-to-tab-stop)
-)
+  (local-set-key [tab] 'tab-to-tab-stop))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
 (setq user-full-name "Glenn Lagasse"
@@ -60,6 +60,7 @@
 (setq fill-column 80)                   ; toggle wrapping text at the 80th character
 (run-at-time nil (* 5 60) 'recentf-save-list) ; update recent files list every 5 minutes
 (global-auto-revert-mode t)             ; automatically reload buffer from disk when changed
+(setq display-time-default-load-average nil)
 (global-linum-mode)
 
 ;; Better scroll settings (less "jumpy" than defaults)
@@ -72,7 +73,8 @@
 (add-hook 'after-save-hook
           #'executable-make-buffer-file-executable-if-script-p)
 
-(use-package general :ensure t)
+(use-package general
+  :ensure t)
 
 ;; Define keys without a prefix
 (general-define-key
@@ -80,7 +82,7 @@
   ;; replace default keybindings
   "/" 'swiper
   "M-x" 'counsel-M-x        ; replace default M-x with ivy backend
-)
+  )
 
 ;; Define keys with a prefix
 (general-define-key
@@ -96,22 +98,26 @@
   "wk" '(evil-window-up)
   "wh" '(evil-window-left)
   "wl" '(evil-window-right)
-  "wd" '(delete-window)
-)
+  "wd" '(delete-window))
+
+(use-package paradox
+  :ensure t
+  :config
+  (paradox-enable))
 
 (use-package linum-relative
-  :ensure t
-  )
+  :ensure t)
 
-(use-package which-key :ensure t
+(use-package which-key
+  :ensure t
   :config
   (setq which-key-idle-delay 0.5)
   :init
   (which-key-mode)
-  :diminish which-key-mode
-)
+  :diminish which-key-mode)
 
-(use-package company :ensure t
+(use-package company
+  :ensure t
   :init
   (add-hook 'after-init-hook 'global-company-mode))
 
@@ -127,7 +133,8 @@
   (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
   )
 
-(use-package counsel :ensure t)
+(use-package counsel
+  :ensure t)
 
 (use-package evil
   :ensure t
@@ -145,7 +152,8 @@
      '(defadvice ,mode (after rename-modeline activate)
         (setq mode-name ,new-name))))
 
-(use-package enh-ruby-mode :ensure t
+(use-package enh-ruby-mode
+  :ensure t
   :mode
   (("Capfile" . enh-ruby-mode)
    ("Gemfile\\'" . enh-ruby-mode)
@@ -154,8 +162,7 @@
    ("\\.rb" . enh-ruby-mode)
    ("\\.ru" . enh-ruby-mode))
   :init
-  (rename-modeline "enh-ruby-mode" enh-ruby-mode "Ruby")
-)
+  (rename-modeline "enh-ruby-mode" enh-ruby-mode "Ruby"))
 
 (use-package smart-mode-line
   :ensure t
@@ -165,15 +172,12 @@
   :config
   (progn
     (setq sml/no-confirm-load-theme t)
-    (sml/setup)
-    )
-  )
+    (sml/setup)))
 
 (use-package zenburn-theme
   :ensure t
   :config
-  (load-theme 'zenburn t)
-  )
+  (load-theme 'zenburn t))
 
 (use-package solarized-theme
   :ensure t
@@ -184,8 +188,7 @@
 (use-package muttrc-mode
   :ensure t
   :defer t
-  :mode "muttrc\\'"
-  )
+  :mode "muttrc\\'")
 
 (use-package vimrc-mode
   :ensure t
@@ -196,29 +199,40 @@
   :diminish
   :defer t
   :config
-  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-)
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
 (use-package flycheck
   :ensure t
   :defer t
   :diminish
   :config
-  (add-hook 'prog-mode-hook (lambda () (flycheck-mode)))
-)
+  (add-hook 'prog-mode-hook (lambda () (flycheck-mode))))
 
 (use-package flycheck-color-mode-line
   :ensure t
   :defer t
   :config
-  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
-)
+  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
 (use-package yaml-mode
   :ensure t
   :defer t
+  :diminish)
+
+(use-package anzu
+  :ensure t
+  :bind ([remap query-replace] . anzu-query-replace-regexp)
   :diminish
-)
+  :config
+  (global-anzu-mode +1)
+  (set-face-attribute 'anzu-mode-line nil
+		      :foreground "yellow" :weight 'bold)
+  (custom-set-variables
+   '(anzu-mode-lighter "")
+   '(anzu-deactivate-region t)
+   '(anzu-search-threshold 1000)
+   '(anzu-replace-threshold 50)
+   '(anzu-replace-to-string-separator " => ")))
 
 ;; Display day/time/date
 (setq display-time-day-and-date t)
@@ -235,7 +249,8 @@
 
 (column-number-mode 1)
 
-(defvar show-paren-delay 0)
+(defvar show-paren-delay 0
+  "Delay (in seconds) before matching paren is highlighted.")
 (show-paren-mode 1)
 
 ;; Mac specific settings
@@ -247,16 +262,14 @@
   (defun iterm-focus ()
     (interactive)
     (do-applescript
-     " do shell script \"open -a iTerm\"\n"
-     ))
+     " do shell script \"open -a iTerm\"\n"))
 
   (general-define-key
    :states '(normal visual emacs)
    :prefix "SPC"
    "'" '(iterm-focus :which-key "focus iterm")
     ;;"?" '(iterm-goto-filedir-or-home :which-key "focus iterm - goto dir")
-    )
-)
+   ))
   
 (require 'cl-lib)
 (defun font-candidate (&rest fonts)
@@ -293,6 +306,36 @@
 
 (set-face-attribute 'default nil :font gl/my-font-spec)
 (set-frame-font gl/my-font-spec)
+
+(defun gl/date-iso ()
+  "Insert the current date, ISO format, eg. 2016-12-09."
+  (interactive)
+  (insert (format-time-string "%F")))
+
+(defun gl/date-iso-with-time ()
+  "Insert the current date, ISO format with time, eg. 2016-12-09T14:34:54+0100."
+  (interactive)
+  (insert (format-time-string "%FT%T%z")))
+
+(defun gl/date-long ()
+  "Insert the current date, long format, eg. December 09, 2016."
+  (interactive)
+  (insert (format-time-string "%B %d, %Y")))
+
+(defun gl/date-long-with-time ()
+  "Insert the current date, long format, eg. December 09, 2016 - 14:34."
+  (interactive)
+  (insert (capitalize (format-time-string "%B %d, %Y - %H:%M"))))
+
+(defun gl/date-short ()
+  "Insert the current date, short format, eg. 2016.12.09."
+  (interactive)
+  (insert (format-time-string "%Y.%m.%d")))
+
+(defun gl/date-short-with-time ()
+  "Insert the current date, short format with time, eg. 2016.12.09 14:34"
+  (interactive)
+  (insert (format-time-string "%Y.%m.%d %H:%M")))
 
 (provide 'init)
 ;;; init.el ends here

@@ -17,5 +17,6 @@
  '(epg-gpg-program "/usr/local/bin/gpg2")
  '(package-selected-packages
    (quote
-    (solarized-theme yaml-mode flycheck-color-mode-line flycheck rainbow-delimiters vimrc-mode muttrc-mode zenburn-theme smart-mode-line magit evil counsel ivy which-key general use-package)))
+    (anzu paradox solarized-theme yaml-mode flycheck-color-mode-line flycheck rainbow-delimiters vimrc-mode muttrc-mode zenburn-theme smart-mode-line magit evil counsel ivy which-key general use-package)))
+ '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838"))))
