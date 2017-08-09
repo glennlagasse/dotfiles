@@ -343,7 +343,7 @@
   (insert (format-time-string "%Y.%m.%d")))
 
 (defun gl/date-short-with-time ()
-  "Insert the current date, short format with time, eg. 2016.12.09 14:34"
+  "Insert the current date, short format with time, eg. 2016.12.09 14:34."
   (interactive)
   (insert (format-time-string "%Y.%m.%d %H:%M")))
 
