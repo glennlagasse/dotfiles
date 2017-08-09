@@ -60,7 +60,9 @@
 (setq fill-column 80)                   ; toggle wrapping text at the 80th character
 (run-at-time nil (* 5 60) 'recentf-save-list) ; update recent files list every 5 minutes
 (global-auto-revert-mode t)             ; automatically reload buffer from disk when changed
-(setq display-time-default-load-average nil)
+(setq display-time-default-load-average nil) ; don't display load average in modeline
+(setq mouse-yank-at-point t)            ; Middle-click pastes at point, not at mouse position
+(setq help-window-select t)             ; automatically select help window
 (global-linum-mode)
 
 ;; Better scroll settings (less "jumpy" than defaults)
@@ -91,6 +93,7 @@
   "n" '(linum-relative-toggle)
   "fe" '(counsel-find-file)
   "fr" '(counsel-recentf)
+  "fd" '(gl/find-user-init-file)
   "bb" '(ivy-switch-buffer)
   "bd" '(kill-this-buffer)
   "w/" '(split-window-horizontally)
@@ -142,6 +145,13 @@
   (progn
     (setq evil-default-cursor t)
     (evil-mode 1)))
+
+(use-package evil-escape
+  :ensure t
+  :diminish evil-escape-mode
+  :config
+  (setq-default evil-escape-key-sequence "kj")
+  (evil-escape-mode 1))
 
 (use-package magit
   :ensure t)
@@ -336,6 +346,11 @@
   "Insert the current date, short format with time, eg. 2016.12.09 14:34"
   (interactive)
   (insert (format-time-string "%Y.%m.%d %H:%M")))
+
+(defun gl/find-user-init-file ()
+  "Edit the `user-init-file', in the current window."
+  (interactive)
+  (find-file-existing user-init-file))
 
 (provide 'init)
 ;;; init.el ends here
