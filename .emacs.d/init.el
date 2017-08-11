@@ -107,11 +107,12 @@
   :ensure t
   :commands (elfeed-search-mode elfeed-show-mode)
   :init
+  (setq elfeed-db-directory "~/Dropbox/emacs/elfeed")
   (setq elfeed-max-connections 10)
   (setq url-queue-timeout 30)
-  (setq elfeed-feeds
-	'(("http://usesthis.com/feed/")
-	   ))
+;  (setq elfeed-feeds
+;	'(("http://usesthis.com/feed/")
+;	   ))
   :config
   ;; mappings for entry list
   (evil-define-key 'normal elfeed-search-mode-map
@@ -154,7 +155,14 @@
     :ensure t
     :config
     (setq elfeed-goodies/entry-pane-position 'bottom)
-    (elfeed-goodies/setup)))
+    (elfeed-goodies/setup))
+
+  (use-package elfeed-org
+    :ensure t
+    :init
+    (elfeed-org)
+    :config
+    (setq rmh-elfeed-org-files (list "~/Dropbox/emacs/elfeed.org"))))
 
 (use-package paradox
   :ensure t
