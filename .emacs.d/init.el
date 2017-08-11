@@ -113,13 +113,6 @@
 	'(("http://usesthis.com/feed/")
 	   ))
   :config
-;  (with-eval-after-load 'evil
-;      (progn
-;        (add-to-list 'evil-emacs-state-modes 'elfeed-search-mode)
-;        (add-to-list 'evil-emacs-state-modes 'elfeed-show-mode)))
-;  (bind-key "q" 'quit-window elfeed-show-mode-map)
-;  (bind-key "q" 'quit-window elfeed-search-mode-map)
-;  (bind-key "<return>" 'elfeed-search-show-entry elfeed-search-mode-map)
   ;; mappings for entry list
   (evil-define-key 'normal elfeed-search-mode-map
     ;; fetch feed updates; default: G
@@ -135,7 +128,7 @@
     ;; read current entry or selected (remove unread tag)
     "h" 'elfeed-search-untag-all-unread
     ;; enter show mode on entry
-    "RET" 'elfeed-search-show-entry
+    (kbd "RET") 'elfeed-search-show-entry
     ;; mark current entry or selected unread
     "u" 'elfeed-search-tag-all-unread
     ;; add a tag to current entry or selected
@@ -156,14 +149,13 @@
     "s" '(lambda () (interactive) (elfeed-search-toggle-all '*))
     ;; remove a tag from current entry
     "d" 'elfeed-show-untag)
-  )
 
-(use-package elfeed-goodies
-  :ensure t
-  :defer t
-  :config
-  (setq elfeed-goodies/entry-pane-position 'bottom)
-  (elfeed-goodies/setup))
+  (use-package elfeed-goodies
+    :ensure t
+    :defer t
+    :config
+    (setq elfeed-goodies/entry-pane-position 'bottom)
+    (elfeed-goodies/setup)))
 
 (use-package paradox
   :ensure t
