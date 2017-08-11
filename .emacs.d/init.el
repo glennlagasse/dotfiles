@@ -31,6 +31,8 @@
 
 (require 'use-package)
 
+(add-to-list 'exec-path "/usr/local/bin")
+
 ;; Disable chrome
 (if (display-graphic-p)
     (progn
@@ -88,7 +90,8 @@
 (general-define-key
   :states '(normal visual emacs)
   :prefix "SPC"
-  "e"  '(elfeed)
+  "af"  '(elfeed)
+  "at"  '(twit)
   "ln" '(linum-mode)
   "lr" '(linum-relative-toggle)
   "fe" '(counsel-find-file)
@@ -162,7 +165,14 @@
     :init
     (elfeed-org)
     :config
-    (setq rmh-elfeed-org-files (list "~/Dropbox/emacs/elfeed.org"))))
+    (setq rmh-elfeed-org-files (list "~/Dropbox/emacs/elfeed-feeds.org"))))
+
+(use-package twittering-mode
+  :ensure t
+  :commands (twit twittering-mode)
+  :config
+  (setq twittering-use-master-password t)
+  (twittering-icon-mode 1))
 
 (use-package paradox
   :ensure t
@@ -332,7 +342,7 @@
 (when (eq system-type 'darwin)
   (setq mac-option-modifier 'alt)
   (setq mac-command-modifier 'meta)
-  (custom-set-variables '(epg-gpg-program  "/usr/local/bin/gpg2"))
+  (custom-set-variables '(epg-gpg-program  "/usr/local/bin/gpg"))
 
   (defun iterm-focus ()
     (interactive)
