@@ -63,7 +63,6 @@
 (setq display-time-default-load-average nil) ; don't display load average in modeline
 (setq mouse-yank-at-point t)            ; Middle-click pastes at point, not at mouse position
 (setq help-window-select t)             ; automatically select help window
-(global-linum-mode)
 
 ;; Better scroll settings (less "jumpy" than defaults)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
@@ -81,16 +80,17 @@
 ;; Define keys without a prefix
 (general-define-key
   :states '(normal visual emacs)
-  ;; replace default keybindings
   "/" 'swiper
-  "M-x" 'counsel-M-x        ; replace default M-x with ivy backend
-  )
+  ; replace default M-x with ivy backend
+  "M-x" 'counsel-M-x)
 
 ;; Define keys with a prefix
 (general-define-key
   :states '(normal visual emacs)
   :prefix "SPC"
-  "n" '(linum-relative-toggle)
+  "e"  '(elfeed)
+  "ln" '(linum-mode)
+  "lr" '(linum-relative-toggle)
   "fe" '(counsel-find-file)
   "fr" '(counsel-recentf)
   "fd" '(gl/find-user-init-file)
@@ -102,6 +102,68 @@
   "wh" '(evil-window-left)
   "wl" '(evil-window-right)
   "wd" '(delete-window))
+
+(use-package elfeed
+  :ensure t
+  :commands (elfeed-search-mode elfeed-show-mode)
+  :init
+  (setq elfeed-max-connections 10)
+  (setq url-queue-timeout 30)
+  (setq elfeed-feeds
+	'(("http://usesthis.com/feed/")
+	   ))
+  :config
+;  (with-eval-after-load 'evil
+;      (progn
+;        (add-to-list 'evil-emacs-state-modes 'elfeed-search-mode)
+;        (add-to-list 'evil-emacs-state-modes 'elfeed-show-mode)))
+;  (bind-key "q" 'quit-window elfeed-show-mode-map)
+;  (bind-key "q" 'quit-window elfeed-search-mode-map)
+;  (bind-key "<return>" 'elfeed-search-show-entry elfeed-search-mode-map)
+  ;; mappings for entry list
+  (evil-define-key 'normal elfeed-search-mode-map
+    ;; fetch feed updates; default: G
+    "o" 'elfeed-update
+    ;; refreash view of feed listing; default: g
+    "O" 'elfeed-search-update--force
+    ;; filter
+    "f" 'elfeed-search-live-filter
+    ;; reset to default filter
+    "F" '(lambda () (interactive) (elfeed-search-set-filter "@3-weeks-ago +unread "))
+    ;; open url in specified browser
+    "b" 'elfeed-search-browse-url
+    ;; read current entry or selected (remove unread tag)
+    "h" 'elfeed-search-untag-all-unread
+    ;; enter show mode on entry
+    "RET" 'elfeed-search-show-entry
+    ;; mark current entry or selected unread
+    "u" 'elfeed-search-tag-all-unread
+    ;; add a tag to current entry or selected
+    "a" 'elfeed-search-tag-all
+    ;; star entries to come back later to and do something about
+    "s" '(lambda () (interactive) (elfeed-search-toggle-all '*))
+    ;; remove a tag from current entry or selected
+    "d" 'elfeed-search-untag-all)
+
+  ;; mappings for when reading a post
+  (evil-define-key 'normal elfeed-show-mode-map
+    (kbd "RET") 'elfeed-search-browse-url
+    "h" 'elfeed-kill-buffer
+    ;; next post
+    "i" 'elfeed-show-next
+    ;; add a tag to current entry
+    "a" 'elfeed-show-tag
+    "s" '(lambda () (interactive) (elfeed-search-toggle-all '*))
+    ;; remove a tag from current entry
+    "d" 'elfeed-show-untag)
+  )
+
+(use-package elfeed-goodies
+  :ensure t
+  :defer t
+  :config
+  (setq elfeed-goodies/entry-pane-position 'bottom)
+  (elfeed-goodies/setup))
 
 (use-package paradox
   :ensure t
@@ -144,6 +206,9 @@
   :config
   (progn
     (setq evil-default-cursor t)
+    (setq evil-emacs-state-modes nil)
+    (setq evil-insert-state-modes nil)
+    (setq evil-motion-state-modes nil)
     (evil-mode 1)))
 
 (use-package evil-escape
@@ -191,8 +256,9 @@
 
 (use-package solarized-theme
   :ensure t
+  :defer t
   ;:config
-  ;(load-theme 'solarized-dark t)
+  ;(load-theme 'solarized-light t)
   )
 
 (use-package muttrc-mode
