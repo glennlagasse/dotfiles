@@ -152,7 +152,6 @@
 
   (use-package elfeed-goodies
     :ensure t
-    :defer t
     :config
     (setq elfeed-goodies/entry-pane-position 'bottom)
     (elfeed-goodies/setup)))
