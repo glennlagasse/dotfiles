@@ -106,6 +106,26 @@
   "wl" '(evil-window-right)
   "wd" '(delete-window))
 
+(use-package org-bullets
+  :ensure t
+  :commands (org-bullets-mode)
+  :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+(org-babel-do-load-languages 'org-babel-load-languages
+    '(
+        (shell . t)
+    )
+)
+
+(use-package htmlize
+  :ensure t
+  :defer t
+  )
+
+(setq org-confirm-babel-evaluate nil
+      org-src-fontify-natively t
+      org-src-tab-acts-natively t)
+
 (use-package elfeed
   :ensure t
   :commands (elfeed-search-mode elfeed-show-mode)
@@ -113,9 +133,6 @@
   (setq elfeed-db-directory "~/Dropbox/emacs/elfeed")
   (setq elfeed-max-connections 10)
   (setq url-queue-timeout 30)
-;  (setq elfeed-feeds
-;	'(("http://usesthis.com/feed/")
-;	   ))
   :config
   ;; mappings for entry list
   (evil-define-key 'normal elfeed-search-mode-map
