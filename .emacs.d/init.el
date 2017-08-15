@@ -15,9 +15,8 @@
 ;; The following lines tell emacs where on the internet to look for
 ;; new packages.
 (setq package-archives '(("org"       . "http://orgmode.org/elpa/")
-                         ("gnu"       . "http://elpa.gnu.org/packages/")
-                         ("melpa"     . "https://melpa.org/packages/")
-                         ("marmalade" . "http://marmalade-repo.org/packages/")))
+                         ("melpa"     . "https://melpa.org/packages/")))
+
 (package-initialize)
 
 (setq-default custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -65,6 +64,8 @@
 (setq display-time-default-load-average nil) ; don't display load average in modeline
 (setq mouse-yank-at-point t)            ; Middle-click pastes at point, not at mouse position
 (setq help-window-select t)             ; automatically select help window
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "google-chrome")
 
 ;; Better scroll settings (less "jumpy" than defaults)
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
@@ -112,19 +113,38 @@
   :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
 (org-babel-do-load-languages 'org-babel-load-languages
-    '(
-        (shell . t)
-    )
-)
+			     '((shell . t)))
 
 (use-package htmlize
   :ensure t
-  :defer t
-  )
+  :defer t)
 
 (setq org-confirm-babel-evaluate nil
       org-src-fontify-natively t
       org-src-tab-acts-natively t)
+
+;; I don't want to evaluate code blocks during export
+(setq org-export-babel-evaluate nil)
+
+;; Remove validate link from exported html Org documents
+(setq org-html-validation-link nil)
+
+(use-package evil
+  :ensure t
+  :config
+  (progn
+    (setq evil-default-cursor t)
+    (setq evil-emacs-state-modes nil)
+    (setq evil-insert-state-modes nil)
+    (setq evil-motion-state-modes nil)
+    (evil-mode 1)))
+
+(use-package evil-escape
+  :ensure t
+  :diminish evil-escape-mode
+  :config
+  (setq-default evil-escape-key-sequence "kj")
+  (evil-escape-mode 1))
 
 (use-package elfeed
   :ensure t
@@ -226,23 +246,6 @@
 
 (use-package counsel
   :ensure t)
-
-(use-package evil
-  :ensure t
-  :config
-  (progn
-    (setq evil-default-cursor t)
-    (setq evil-emacs-state-modes nil)
-    (setq evil-insert-state-modes nil)
-    (setq evil-motion-state-modes nil)
-    (evil-mode 1)))
-
-(use-package evil-escape
-  :ensure t
-  :diminish evil-escape-mode
-  :config
-  (setq-default evil-escape-key-sequence "kj")
-  (evil-escape-mode 1))
 
 (use-package magit
   :ensure t)
